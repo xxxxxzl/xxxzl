@@ -107,8 +107,9 @@ def get_xs(element, xs_title, xzl_path=False):
     xs_path = os.path.join(os.path.expanduser("~"), 'Desktop') + '/' + \
                xp + xs_title + '/'
     for idx, item in enumerate(ims):
+        zj_title = item.find_element_by_class_name('cap').text
         href = item.find_element_by_tag_name('a').get_property('href')
-        path = xs_path + item.text.replace('\n', '').replace(' ', '').replace('/', '-') + '/'
+        path = xs_path + zj_title.replace('\n', '').replace(' ', '').replace('/', '-') + '/'
         if xs_pdf and not markdown:
             path = xs_path
         if not os.path.exists(path):
@@ -135,7 +136,9 @@ def get_xs_detail(href, path):
     response = requests.get(url=href, headers={'cookie': '_xiaozhuanlan_session=' + driver.get_cookies()[0]['value']})
     selector = Selector(text=response.text)
     html = selector.css(u'.cata-book-content').extract_first()
-    zj_title = selector.css(u'.cata-sm-title ::text').extract_first().replace('\n', '').replace(' ', '').replace('/', '-')
+    zj_title = selector.css(u'.cata-sm-title ::text').extract_first()
+    if zj_title:
+        zj_title = zj_title.replace('\n', '').replace(' ', '').replace('/', '-')
     print('当前采集章节为: ' + zj_title)
     file_name = zj_title
     if markdown:
